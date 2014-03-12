@@ -636,7 +636,7 @@ class Client(httplib2.Http):
 
         self.method = method
 
-    def request(self, uri, method="GET", body='', headers=None, 
+    def request(self, uri, method="GET", body='', headers=None, extra_parameters=None,
         redirections=httplib2.DEFAULT_MAX_REDIRECTS, connection_type=None):
         DEFAULT_POST_CONTENT_TYPE = 'application/x-www-form-urlencoded'
 
@@ -655,9 +655,16 @@ class Client(httplib2.Http):
         else:
             parameters = None
 
+        if parameters:
+            parameters.update(extra_parameters)
+        else:
+            parameters = extra_parameters
+
         req = Request.from_consumer_and_token(self.consumer, 
             token=self.token, http_method=method, http_url=uri, 
             parameters=parameters, body=body, is_form_encoded=is_form_encoded)
+
+        print req
 
         req.sign_request(self.method, self.consumer, self.token)
 
